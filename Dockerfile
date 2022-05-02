@@ -1,6 +1,6 @@
 ############################################
 
-FROM bitnami/postgresql-repmgr:13
+FROM bitnami/postgresql-repmgr:14
 
 
 ## Change user to perform privileged actions
@@ -24,7 +24,7 @@ RUN apt-get clean all && \
     rm -rf /var/tmp/*
 
 ######################[Repository]######################
-##[Repository] (Postgresql-13)
+##[Repository] (Postgresql-14)
 RUN install_packages gnupg2
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc |  apt-key add -
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list
@@ -34,11 +34,11 @@ RUN apt-get update
 
 ##[Extension][plpython3]
 ##[Extension][plpython3] | install
-RUN install_packages python3 postgresql-contrib postgresql-plpython3-13
+RUN install_packages python3 postgresql-contrib postgresql-plpython3-14
 
 ##[Extension][plpython3] | copy
-RUN mv /usr/share/postgresql/13/extension/*plpython3* /opt/bitnami/postgresql/share/extension/
-RUN mv /usr/lib/postgresql/13/lib/*plpython3* /opt/bitnami/postgresql/lib/
+RUN mv /usr/share/postgresql/14/extension/*plpython3* /opt/bitnami/postgresql/share/extension/
+RUN mv /usr/lib/postgresql/14/lib/*plpython3* /opt/bitnami/postgresql/lib/
 
 ##[Extension][plpython3] | clear
 RUN apt-get clean all && \
@@ -49,11 +49,11 @@ RUN apt-get clean all && \
 ######################
 
 ##[Extension][pg_cron]
-RUN install_packages postgresql-13-cron
+RUN install_packages postgresql-14-cron
 
 ##[Extension][pg_cron] | copy
-RUN mv /usr/share/postgresql/13/extension/*pg_cron* /opt/bitnami/postgresql/share/extension/
-RUN mv /usr/lib/postgresql/13/lib/*pg_cron* /opt/bitnami/postgresql/lib/
+RUN mv /usr/share/postgresql/14/extension/*pg_cron* /opt/bitnami/postgresql/share/extension/
+RUN mv /usr/lib/postgresql/14/lib/*pg_cron* /opt/bitnami/postgresql/lib/
 
 
 
