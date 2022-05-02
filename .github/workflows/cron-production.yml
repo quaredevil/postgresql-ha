@@ -51,7 +51,7 @@ jobs:
           echo ::set-output name=tag_with_version::"${VERSION}"
           echo ::set-output name=image_with_tag::"${DOCKER_IMAGE}:${VERSION}"
           
-          TAGS="$TAGS,${DOCKER_IMAGE}:${VERSION}"
+          TAGS="latest,$TAGS,${DOCKER_IMAGE}:${VERSION}"
           echo ::set-output name=tags::${TAGS}
           
           echo "Tag(version): ${VERSION}"
