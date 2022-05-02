@@ -1,4 +1,4 @@
-.. |RepositoryName| replace:: postgresql-ha-repmgr-plpython3-pgcron-13
+.. |RepositoryName| replace:: postgresql-ha-repmgr-plpython3-pgcron-14
 
 ===============
 |RepositoryName|
@@ -8,7 +8,7 @@ Docker Hub
 =============
 
 Auto generated of new version:
-    postgresql 13 with high availability (repmgr) and plugins: plpython3, pgcron.
+    postgresql 14 with high availability (repmgr) and plugins: plpython3, pgcron.
 
 * image: `quaredevil/postgresql-repmgr-plpython3-pgcron`_
 
