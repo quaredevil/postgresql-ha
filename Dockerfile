@@ -1,4 +1,7 @@
+##docker build -t quaredevil/postgresql-repmgr-plpython3-pgcron:14-latest .
+##docker push quaredevil/postgresql-repmgr-plpython3-pgcron:14-latest 
 ############################################
+ARG VERSION=14
 
 FROM bitnami/postgresql-repmgr:14
 
@@ -17,14 +20,9 @@ RUN rm -r /var/lib/apt/lists /var/cache/apt/archives
 ##[apt] install
 RUN install_packages build-essential cmake git gnupg libcurl4-openssl-dev libssl-dev libz-dev lsb-release wget libc6
 
-##[apt] clean
-RUN apt-get clean all && \
-    rm -rf /var/cache/apk/* && \
-    rm -rf /tmp/* && \
-    rm -rf /var/tmp/*
 
 ######################[Repository]######################
-##[Repository] (Postgresql-14)
+##[Repository] (Postgresql)
 RUN install_packages gnupg2
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc |  apt-key add -
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list
@@ -57,12 +55,6 @@ RUN mv /usr/lib/postgresql/14/lib/*pg_cron* /opt/bitnami/postgresql/lib/
 
 
 
-##[Extension][pg_cron] | clear
-RUN apt-get clean all && \
-    rm -rf /var/cache/apk/* && \
-    rm -rf /tmp/* && \
-    rm -rf /var/tmp/*
-
 
 ##Extension [timescale] 
 ## RUN git clone https://github.com/timescale/timescaledb.git --branch 1.7.2 /tmp/timescaledb     && \
@@ -79,10 +71,54 @@ RUN apt-get clean all && \
 ## #COPY /tmp/timescaledb/ /opt/bitnami/postgresql/conf/conf.d/ 
 ## 
 ## 
-## ##Extension [zombodb] 
-## RUN git clone https://github.com/zombodb/zombodb.git /tmp/zombodb     && \
-##     make -C /tmp/zombodb clean install
+
+##Extension [zombodb] 
+RUN export CARGO_HOME=/tmp/cargo && export RUSTUP_HOME=/tmp/rustup && export PATH=$CARGO_HOME/bin:$PATH \
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y \
+    && cargo install cargo-pgx \
+    && cargo pgx init --pg14=`which pg_config` \
+    && git clone -b https://github.com/zombodb/zombodb /tmp/zombodb \
+    && cd /tmp/zombodb \
+    && sudo bash -c 'CARGO_HOME=/tmp/cargo RUSTUP_HOME=/tmp/rustup PATH=$CARGO_HOME/bin:$PATH PGX_HOME=/var/lib/postgresql/.pgx cargo pgx install --release' \
+    && sudo rm -rf /var/lib/postgresql/.pgx || true
 
 
+##Extension [pgroonga] https://github.com/pgroonga/pgroonga
+#RUN install_packages postgresql-14-pgdg-pgroonga
+
+##wal2json https://github.com/eulerto/wal2json
+#RUN git clone https://github.com/eulerto/wal2json /tmp/wal2json \
+#    && cd /tmp/wal2json \
+#    && make && sudo make install
+
+## pgsql-http https://github.com/pramsey/pgsql-http
+#RUN wget -O /tmp/pgsql-http.tar.gz "https://github.com/pramsey/pgsql-http/archive/v${PGSQL_HTTP}.tar.gz" \
+#    && mkdir -p /tmp/pgsql-http \
+#    && tar --extract --file /tmp/pgsql-http.tar.gz --directory /tmp/pgsql-http --strip-components 1 \
+#    && cd /tmp/pgsql-http \
+#    && make && sudo make install \
+
+##clear
+RUN apt-get autoremove --purge -y --allow-remove-essential \
+        curl \
+        build-essential \
+        libssl-dev \
+        git \
+        dpkg-dev \
+        gcc \
+        libc-dev \
+        make \
+        cmake \
+        wget \
+        libcurl4-openssl-dev \
+    && apt-get clean -y \
+    && rm -rf \
+        "${HOME}/.cache" \
+        /var/lib/apt/lists/* \
+        /var/cache/apk/* \
+        /tmp/* \
+        /var/tmp/* \
+    && apt-get clean all
+    
 ## Revert to the original non-root user
 USER 1001
