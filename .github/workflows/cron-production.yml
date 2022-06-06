@@ -69,18 +69,17 @@ jobs:
       - name: 🐳 Container | Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-          install: true
           version: latest
           endpoint: builders
 
       #----------------------------------------------
       #       load cached if cache exists
       #----------------------------------------------
-      #- name: ⚡️ Cache | Cache Docker layers
-      #  uses: actions/cache@v2
-      #  with:
-      #    path: /tmp/.buildx-cache
-      #    key: ${{ runner.os }}-buildx-${{ github.sha }}
+      - name: ⚡️ Cache | Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
 
 
       #----------------------------------------------
@@ -105,6 +104,7 @@ jobs:
           tags: ${{ steps.prepare_k8s.outputs.tags }}
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
+          no-cache: true
 
 
       - name: 🏷️ Tag | Generate new values with tag
