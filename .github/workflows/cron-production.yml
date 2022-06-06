@@ -44,7 +44,6 @@ jobs:
         id: prepare_k8s
         run: |
           DOCKER_IMAGE=${{ secrets.DOCKERHUB_IMAGE }}
-          TAGS-LATEST="${DOCKER_IMAGE}:latest"
           VERSION=${{ secrets.POSTGRESQL_VERSION }}-latest
           TAGS="${DOCKER_IMAGE}:${VERSION}"
 
@@ -52,7 +51,7 @@ jobs:
           echo ::set-output name=tag_with_version::"${VERSION}"
           echo ::set-output name=image_with_tag::"${DOCKER_IMAGE}:${VERSION}"
           
-          TAGS="$TAGS-LATEST,$TAGS,${DOCKER_IMAGE}:${VERSION}"
+          TAGS="${DOCKER_IMAGE}:latest, $TAGS, ${DOCKER_IMAGE}:${VERSION}"
           echo ::set-output name=tags::${TAGS}
           
           echo "Tag(version): ${VERSION}"
