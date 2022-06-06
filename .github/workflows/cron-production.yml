@@ -76,11 +76,11 @@ jobs:
       #----------------------------------------------
       #       load cached if cache exists
       #----------------------------------------------
-      - name: ⚡️ Cache | Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+      #- name: ⚡️ Cache | Cache Docker layers
+      #  uses: actions/cache@v2
+      #  with:
+      #    path: /tmp/.buildx-cache
+      #    key: ${{ runner.os }}-buildx-${{ github.sha }}
 
 
       #----------------------------------------------
@@ -103,8 +103,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ steps.prepare_k8s.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          #cache-from: type=gha
+          #cache-to: type=gha,mode=max
 
 
       - name: 🏷️ Tag | Generate new values with tag
