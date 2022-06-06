@@ -44,6 +44,7 @@ jobs:
         id: prepare_k8s
         run: |
           DOCKER_IMAGE=${{ secrets.DOCKERHUB_IMAGE }}
+          TAGS-LATEST="${DOCKER_IMAGE}:latest"
           VERSION=${{ secrets.POSTGRESQL_VERSION }}-latest
           TAGS="${DOCKER_IMAGE}:${VERSION}"
 
@@ -51,7 +52,7 @@ jobs:
           echo ::set-output name=tag_with_version::"${VERSION}"
           echo ::set-output name=image_with_tag::"${DOCKER_IMAGE}:${VERSION}"
           
-          TAGS="latest,$TAGS,${DOCKER_IMAGE}:${VERSION}"
+          TAGS="$TAGS-LATEST,$TAGS,${DOCKER_IMAGE}:${VERSION}"
           echo ::set-output name=tags::${TAGS}
           
           echo "Tag(version): ${VERSION}"
@@ -67,7 +68,7 @@ jobs:
           docker context create builders
 
       - name: 🐳 Container | Set up Docker Buildx
-        uses: docker/setup-buildx-action@master
+        uses: docker/setup-buildx-action@v2
         with:
           install: true
           version: latest
@@ -108,9 +109,9 @@ jobs:
           tags: ${{ steps.prepare_k8s.outputs.tags }}
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
-          #cache-from: type=local,src=/tmp/.buildx-cache
+          cache-from: type=local,src=/tmp/.buildx-cache
           #cache-to: type=local,dest=/tmp/.buildx-cache-new
-          #cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
 
       #----------------------------------------------
       # Clean Cache 
