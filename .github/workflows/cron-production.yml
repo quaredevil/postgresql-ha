@@ -77,9 +77,11 @@ jobs:
       #----------------------------------------------
       - name: ⚡️ Cache | Cache Docker layers
         uses: actions/cache@v3
-        with:
+        with:        
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
 
       #----------------------------------------------
@@ -93,7 +95,7 @@ jobs:
       
 
       #----------------------------------------------
-      #Build and push
+      # Build and push
       #----------------------------------------------
       - name: 🐳 Container | Build and push
         uses: docker/build-push-action@v3
@@ -104,8 +106,23 @@ jobs:
           tags: ${{ steps.prepare_k8s.outputs.tags }}
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
           no-cache: true
 
+      #----------------------------------------------
+      # Clean Cache 
+      #----------------------------------------------
+
+      - name: 🐳 Container | Clean cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+
+      #----------------------------------------------
+      # Change Tag 
+      #----------------------------------------------
 
       - name: 🏷️ Tag | Generate new values with tag
         env:
