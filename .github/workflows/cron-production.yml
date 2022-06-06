@@ -62,7 +62,7 @@ jobs:
       #This is the a separate action that sets up buildx runner
       #----------------------------------------------
       - name: 🐳 Container | Set up Docker Context for Buildx
-        id: buildx-context
+        id: buildx
         run: |
           docker context create builders
 
@@ -102,6 +102,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          builder: ${{ steps.buildx.outputs.name }}
           platforms: linux/amd64
           push: true
           tags: ${{ steps.prepare_k8s.outputs.tags }}
