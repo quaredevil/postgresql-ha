@@ -73,14 +73,14 @@ RUN mv /usr/lib/postgresql/14/lib/*pg_cron* /opt/bitnami/postgresql/lib/
 ## 
 
 ##Extension [zombodb] 
-#RUN export CARGO_HOME=/tmp/cargo && export RUSTUP_HOME=/tmp/rustup && export PATH=$CARGO_HOME/bin:$PATH \
-#    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y \
-#    && cargo install cargo-pgx \
-#    && cargo pgx init --pg14=`which pg_config` \
-#    && git clone -b https://github.com/zombodb/zombodb /tmp/zombodb \
-#    && cd /tmp/zombodb \
-#    && sudo bash -c 'CARGO_HOME=/tmp/cargo RUSTUP_HOME=/tmp/rustup PATH=$CARGO_HOME/bin:$PATH PGX_HOME=/var/lib/postgresql/.pgx cargo pgx install --release' \
-#    && sudo rm -rf /var/lib/postgresql/.pgx || true
+RUN export CARGO_HOME=/tmp/cargo && export RUSTUP_HOME=/tmp/rustup && export PATH=$CARGO_HOME/bin:$PATH \
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y \
+    && cargo install cargo-pgx \
+    && cargo pgx init --pg14=`which pg_config` \
+    && git clone -b https://github.com/zombodb/zombodb /tmp/zombodb \
+    && cd /tmp/zombodb \
+    && sudo bash -c 'CARGO_HOME=/tmp/cargo RUSTUP_HOME=/tmp/rustup PATH=$CARGO_HOME/bin:$PATH PGX_HOME=/var/lib/postgresql/.pgx cargo pgx install --release' \
+    && sudo rm -rf /var/lib/postgresql/.pgx || true
 
 
 ##Extension [pgroonga] https://github.com/pgroonga/pgroonga
