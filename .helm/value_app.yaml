@@ -103,4 +103,4 @@ volumePermissions:
   enabled: true
 postgresqlImage:
   repository: quaredevil/postgresql-repmgr-plpython3-pgcron
-  tag: 14-v0.0.56
+  tag: 14-v0.0.57
